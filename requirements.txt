@@ -1,0 +1,11 @@
+python-telegram-bot[webhooks]==20.7
+SQLAlchemy[asyncio]==2.0.25
+aiosqlite==0.20.0
+alembic==1.13.1
+APScheduler==3.10.4
+python-dotenv==1.0.0
+pytz==2024.1
+# Phase 3
+google-api-python-client==2.114.0
+google-auth-oauthlib==1.2.0
+reportlab==4.1.0
