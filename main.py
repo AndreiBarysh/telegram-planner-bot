@@ -18,6 +18,7 @@ from telegram.ext import (
 
 from config import Config
 from database.db import close_db, init_db
+from database.seed_blueprint import seed_blueprint_plan
 from handlers.callbacks import callback_handler
 from handlers.commands import (
     add_project_command,
@@ -181,6 +182,10 @@ async def on_startup(app: Application) -> None:
     """Run startup tasks."""
     logger = logging.getLogger(__name__)
     await init_db()
+    try:
+        await seed_blueprint_plan()
+    except Exception:
+        logger.exception("Blueprint seed failed (continuing startup)")
     init_scheduler(app)
     logger.info("Bot started successfully")
 
