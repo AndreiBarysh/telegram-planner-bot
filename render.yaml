@@ -8,6 +8,6 @@ services:
       - key: BOT_TOKEN
         sync: false
       - key: DATABASE_URL
-        value: sqlite+aiosqlite:///planner_bot.db
+        sync: false
       - key: LOG_LEVEL
         value: INFO

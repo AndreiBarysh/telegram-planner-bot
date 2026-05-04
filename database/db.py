@@ -9,10 +9,20 @@ from database.models import Base
 
 logger = logging.getLogger(__name__)
 
-_is_sqlite = Config.DATABASE_URL.startswith("sqlite")
+def _normalize_db_url(url: str) -> str:
+    """Ensure async driver is used (postgres:// → postgresql+asyncpg://)."""
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif url.startswith("postgresql://") and "+asyncpg" not in url:
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    return url
+
+
+_db_url = _normalize_db_url(Config.DATABASE_URL)
+_is_sqlite = _db_url.startswith("sqlite")
 
 engine = create_async_engine(
-    Config.DATABASE_URL,
+    _db_url,
     echo=False,
     **({} if _is_sqlite else {"pool_size": 20, "max_overflow": 10, "pool_pre_ping": True}),
 )
