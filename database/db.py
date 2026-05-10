@@ -10,11 +10,17 @@ from database.models import Base
 logger = logging.getLogger(__name__)
 
 def _normalize_db_url(url: str) -> str:
-    """Ensure async driver is used (postgres:// → postgresql+asyncpg://)."""
+    """Adapt URL for asyncpg: enforce async driver, translate ssl param."""
     if url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql+asyncpg://", 1)
     elif url.startswith("postgresql://") and "+asyncpg" not in url:
         url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    # asyncpg uses `ssl=` instead of psycopg2's `sslmode=`
+    if "+asyncpg" in url:
+        url = url.replace("sslmode=require", "ssl=require")
+        url = url.replace("sslmode=disable", "ssl=disable")
+        url = url.replace("sslmode=verify-ca", "ssl=verify-ca")
+        url = url.replace("sslmode=verify-full", "ssl=verify-full")
     return url
 
 
