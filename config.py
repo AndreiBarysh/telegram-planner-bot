@@ -10,9 +10,14 @@ BASE_DIR = Path(__file__).resolve().parent
 class Config:
     # Telegram
     BOT_TOKEN: str = os.getenv("BOT_TOKEN", "")
-    WEBHOOK_URL: str = os.getenv("WEBHOOK_URL", "")
-    USE_WEBHOOK: bool = os.getenv("USE_WEBHOOK", "false").lower() == "true"
-    WEBHOOK_PORT: int = int(os.getenv("WEBHOOK_PORT", "8443"))
+    WEBHOOK_URL: str = os.getenv("WEBHOOK_URL", "") or os.getenv("RENDER_EXTERNAL_URL", "")
+    # Auto-enable webhook on Render (where PORT/RENDER_EXTERNAL_URL are set)
+    USE_WEBHOOK: bool = (
+        os.getenv("USE_WEBHOOK", "").lower() == "true"
+        or bool(os.getenv("RENDER_EXTERNAL_URL"))
+    )
+    # Render injects $PORT for web services
+    WEBHOOK_PORT: int = int(os.getenv("PORT") or os.getenv("WEBHOOK_PORT", "8443"))
 
     # Database (SQLite by default, set DATABASE_URL for PostgreSQL)
     DATABASE_URL: str = os.getenv(
